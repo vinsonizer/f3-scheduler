@@ -4,7 +4,6 @@ const AWS = require('aws-sdk')
 const dynamodb = new AWS.DynamoDB.DocumentClient()
 
 exports.handler = async (event, context) => {
-
   const params = {
     TableName: process.env.PAX_TABLE
   }

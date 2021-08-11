@@ -4,11 +4,15 @@ const AWS = require('aws-sdk')
 const dynamodb = new AWS.DynamoDB.DocumentClient()
 
 exports.handler = async (event, context) => {
+  console.log(`event is ${JSON.stringify(event)}`)
+
+  const input = JSON.parse(event.body)
+  console.log(`input is ${input}`)
   const pax = {
-    paxName    : event.body.paxName,
-    regionName : event.body.regionName,
-    firstName  : event.body.firstName,
-    lastName   : event.body.lastName
+    paxName: input.paxName,
+    regionName: input.regionName,
+    firstName: input.firstName,
+    lastName: input.lastName
   }
 
   const params = {
@@ -19,16 +23,21 @@ exports.handler = async (event, context) => {
     Item: pax
   }
 
-  const result = await dynamodb.put(params).promise()
   const response = {
-    statusCode: 200,
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Credentials': true
-    },
-    body: JSON.stringify({
+    }
+  }
+  try {
+    await dynamodb.put(params).promise()
+    response.statusCode = 200
+    response.body = JSON.stringify({
       pax: pax
     })
+  } catch (err) {
+    response.statusCode = 500
+    response.body = JSON.stringify(err)
   }
   return response
 }
