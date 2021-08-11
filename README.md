@@ -10,4 +10,3 @@ Open command line and execute:
 ``
 npm -g install serverless
 serverless deploy
-``
