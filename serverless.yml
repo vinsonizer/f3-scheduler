@@ -1,0 +1,59 @@
+service: f3-scheduler
+
+configValidationMode: error
+
+frameworkVersion: '2'
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  lambdaHashingVersion: '20201221'
+  environment:
+    PAX_TABLE: f3-scheduler-pax
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Action:
+            - dynamodb:Scan
+            - dynamodb:UpdateItem
+            - dynamodb:PutItem
+            - dynamodb:GetItem
+          Resource: "arn:aws:dynamodb:*:*:table/${self:provider.environment.PAX_TABLE}"
+
+
+functions:
+  updatePax:
+    handler: backend/update_pax.handler
+    events:
+      - http:
+          path: pax
+          method: post
+          cors: true
+  getPax:
+    handler: backend/get_pax.handler
+    events:
+      - http:
+          path: pax
+          method: get
+          cors: true
+
+resources:
+  Resources:
+    paxTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.PAX_TABLE}
+        AttributeDefinitions:
+          - AttributeName: paxName
+            AttributeType: S
+          - AttributeName: regionName
+            AttributeType: S
+        KeySchema:
+          - AttributeName: paxName
+            KeyType: HASH
+          - AttributeName: regionName
+            KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
