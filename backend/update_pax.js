@@ -6,9 +6,13 @@ const dynamodb = new AWS.DynamoDB.DocumentClient()
 exports.handler = async (event, context) => {
   console.log(`event is ${JSON.stringify(event)}`)
 
-  const input = SON.parse(event.body)
+  const input = JSON.parse(event.body)
   console.log(`input is ${input}`)
+
+  let theId = input.id||context.awsRequestId
+
   const pax = {
+    id: theId,
     paxName: input.paxName,
     regionName: input.regionName,
     firstName: input.firstName,

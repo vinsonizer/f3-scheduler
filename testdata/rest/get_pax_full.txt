@@ -1,2 +1,0 @@
-GET https://02cdod8lvk.execute-api.us-east-1.amazonaws.com/dev/pax
-Content-type: application/json

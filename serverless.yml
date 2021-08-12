@@ -30,14 +30,20 @@ functions:
           path: pax
           method: post
           cors: true
-  getPax:
-    handler: backend/get_pax.handler
+  listPax:
+    handler: backend/get_pax.getAll
     events:
       - http:
           path: pax
           method: get
           cors: true
-
+  getPaxDetails:
+    handler: backend/get_pax.getById
+    events:
+      - http:
+          path: pax/{id}
+          method: get
+          cors: true
 resources:
   Resources:
     paxTable:
@@ -45,15 +51,11 @@ resources:
       Properties:
         TableName: ${self:provider.environment.PAX_TABLE}
         AttributeDefinitions:
-          - AttributeName: paxName
-            AttributeType: S
-          - AttributeName: regionName
+          - AttributeName: id
             AttributeType: S
         KeySchema:
-          - AttributeName: paxName
+          - AttributeName: id
             KeyType: HASH
-          - AttributeName: regionName
-            KeyType: RANGE
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1

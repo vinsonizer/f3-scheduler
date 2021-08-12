@@ -1,9 +1,0 @@
-POST https://02cdod8lvk.execute-api.us-east-1.amazonaws.com/dev/pax
-Content-type: application/json
-
-{
-    "paxName": "Gears",
-    "regionName": "The Fort",
-    "firstName": "Jason"
-    "lastName": "Vinson"
-}
