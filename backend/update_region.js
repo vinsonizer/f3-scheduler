@@ -1,5 +1,6 @@
 // Include the AWS SDK module
 const AWS = require('aws-sdk')
+const utils = require('backend/utils')
 // Instantiate a DynamoDB document client with the SDK
 const dynamodb = new AWS.DynamoDB.DocumentClient()
 
@@ -9,23 +10,25 @@ exports.handler = async (event, context) => {
   const input = JSON.parse(event.body)
   console.log(`input is ${input}`)
 
-  const theId = input.id || context.awsRequestId
+  const id = input.id || utils.slugify(input.regionName)
 
-  const pax = {
-    id: theId,
-    paxName: input.paxName,
-    regionId: input.regionId,
-    firstName: input.firstName,
-    lastName: input.lastName,
-    emailAddress: input.emailAddress
+  const region = {
+    id: id,
+    regionName: input.regionName,
+    emailAddress: input.emailAddress,
+    nantanId: input.nantanId,
+    firstFQId: input.firstFQId,
+    secondFQId: input.secondFQId,
+    thirdFQId: input.thirdFQId,
+    weaselShakerId: input.weaselShakerId
   }
 
   const params = {
-    TableName: process.env.PAX_TABLE,
+    TableName: process.env.REGIONS_TABLE,
     Key: {
-      paxName: pax.paxName
+      regionName: region.regionName
     },
-    Item: pax
+    Item: region
   }
 
   const response = {
@@ -38,7 +41,7 @@ exports.handler = async (event, context) => {
     await dynamodb.put(params).promise()
     response.statusCode = 200
     response.body = JSON.stringify({
-      pax: pax
+      region: region
     })
   } catch (err) {
     response.statusCode = 500
