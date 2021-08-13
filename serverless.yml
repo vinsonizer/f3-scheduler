@@ -11,9 +11,17 @@ provider:
   environment:
     PAX_TABLE: f3-scheduler-pax
     REGIONS_TABLE: f3-scheduler-regions
+    AOS_TABLE: f3-scheduler-aos
   iam:
     role:
       statements:
+        - Effect: "Allow"
+          Action:
+            - dynamodb:Scan
+            - dynamodb:UpdateItem
+            - dynamodb:PutItem
+            - dynamodb:GetItem
+          Resource: "arn:aws:dynamodb:*:*:table/${self:provider.environment.AOS_TABLE}"
         - Effect: "Allow"
           Action:
             - dynamodb:Scan
@@ -31,6 +39,27 @@ provider:
 
 
 functions:
+  updateAo:
+    handler: backend/update_ao.handler
+    events:
+      - http:
+          path: aos
+          method: post
+          cors: true
+  listAos:
+    handler: backend/get_ao.getAll
+    events:
+      - http:
+          path: aos
+          method: get
+          cors: true
+  getAoDetails:
+    handler: backend/get_ao.getById
+    events:
+      - http:
+          path: aos/{id}
+          method: get
+          cors: true
   updatePax:
     handler: backend/update_pax.handler
     events:
@@ -76,6 +105,19 @@ functions:
 
 resources:
   Resources:
+    aosTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.AOS_TABLE}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
     paxTable:
       Type: AWS::DynamoDB::Table
       Properties:

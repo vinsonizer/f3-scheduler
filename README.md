@@ -4,7 +4,7 @@ Serverless AWS Application to manage scheduling of F3 workouts
 ## Pre-Requisites
  - Install npm (https://nodejs.org/en/)
  - AWS CLI installed and configured
- - AWS Account
+ - AWS Account with proper policies
 
 
 Open command line and execute:
