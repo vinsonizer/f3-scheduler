@@ -9,7 +9,7 @@ exports.handler = async (event, context) => {
   const input = JSON.parse(event.body)
   console.log(`input is ${input}`)
 
-  let theId = input.id||context.awsRequestId
+  const theId = input.id || context.awsRequestId
 
   const pax = {
     id: theId,
