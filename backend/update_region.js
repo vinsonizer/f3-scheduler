@@ -16,11 +16,9 @@ exports.handler = async (event, context) => {
     id: id,
     regionName: input.regionName,
     emailAddress: input.emailAddress,
-    nantanId: input.nantanId,
-    firstFQId: input.firstFQId,
-    secondFQId: input.secondFQId,
-    thirdFQId: input.thirdFQId,
-    weaselShakerId: input.weaselShakerId
+    website: input.website,
+    location: input.location,
+    slt: input.slt
   }
 
   const params = {

@@ -11,22 +11,20 @@ exports.handler = async (event, context) => {
 
   const theId = input.id || context.awsRequestId
 
-  const ao = {
+  const assignment = {
     id: theId,
-    aoName: input.aoName,
-    regionId: input.regionId,
-    gpsCoordinates: input.gpsCoordinates,
-    type: input.type,
-    schedule: input.schedule,
-    siteQId: input.siteQId
+    aoId: input.aoId,
+    datetime: input.datetime,
+    q: input.q,
+    status: input.status
   }
 
   const params = {
-    TableName: process.env.AOS_TABLE,
+    TableName: process.env.ASSIGNMENTS_TABLE,
     Key: {
-      id: ao.id
+      id: assignment.id
     },
-    Item: ao
+    Item: assignment
   }
 
   const response = {

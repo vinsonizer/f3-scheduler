@@ -12,9 +12,17 @@ provider:
     PAX_TABLE: f3-scheduler-pax
     REGIONS_TABLE: f3-scheduler-regions
     AOS_TABLE: f3-scheduler-aos
+    ASSIGNMENTS_TABLE: f3-scheduler-assignments
   iam:
     role:
       statements:
+        - Effect: "Allow"
+          Action:
+            - dynamodb:Scan
+            - dynamodb:UpdateItem
+            - dynamodb:PutItem
+            - dynamodb:GetItem
+          Resource: "arn:aws:dynamodb:*:*:table/${self:provider.environment.ASSIGNMENTS_TABLE}"
         - Effect: "Allow"
           Action:
             - dynamodb:Scan
@@ -39,6 +47,27 @@ provider:
 
 
 functions:
+  updateAssignment:
+    handler: backend/update_assignment.handler
+    events:
+      - http:
+          path: assignments
+          method: post
+          cors: true
+  listAssignments:
+    handler: backend/get_assignment.getAll
+    events:
+      - http:
+          path: assignments
+          method: get
+          cors: true
+  getAssignmentDetails:
+    handler: backend/get_assignment.getById
+    events:
+      - http:
+          path: assignments/{id}
+          method: get
+          cors: true
   updateAo:
     handler: backend/update_ao.handler
     events:
@@ -109,6 +138,19 @@ resources:
       Type: AWS::DynamoDB::Table
       Properties:
         TableName: ${self:provider.environment.AOS_TABLE}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    assignmentsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.ASSIGNMENTS_TABLE}
         AttributeDefinitions:
           - AttributeName: id
             AttributeType: S
