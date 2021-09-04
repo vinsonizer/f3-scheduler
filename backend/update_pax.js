@@ -17,7 +17,9 @@ exports.handler = async (event, context) => {
     regionId: input.regionId,
     firstName: input.firstName,
     lastName: input.lastName,
-    emailAddress: input.emailAddress
+    phoneNumber: input.phoneNumber,
+    emailAddress: input.emailAddress,
+    socialAccounts: input.socialAccounts
   }
 
   const params = {
