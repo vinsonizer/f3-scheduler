@@ -14,10 +14,14 @@ The key features for this project are:
  - Install npm (https://nodejs.org/en/)
  - AWS CLI installed and configured
  - AWS Account with proper policies (TODO: create AWS policy template)
+ - Copy .env.sample to .env and edit
 
 Open command line and execute:
 
     npm -g install serverless
+    # backend services
     serverless deploy
+    # frontend app
+    serverless client deploy
 
 The command line output should list urls that point to all services and the (pending) web application link that can be used for development and ultimately rollout to production use.
