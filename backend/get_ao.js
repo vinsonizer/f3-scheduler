@@ -8,6 +8,8 @@ exports.getAll = async (event, context) => {
     TableName: process.env.AOS_TABLE
   }
 
+  const regionId = event.pathParameters.regionId
+
   const result = await dynamodb.scan(params).promise()
 
   const response = {
@@ -24,10 +26,11 @@ exports.getAll = async (event, context) => {
 }
 
 exports.getById = async (event, context) => {
+  const regionId = event.pathParameters.regionId
   const params = {
     TableName: process.env.AOS_TABLE,
     Key: {
-      id: event.pathParameters.id
+      regionId: regionId
     }
   }
 

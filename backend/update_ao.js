@@ -9,10 +9,11 @@ exports.handler = async (event, context) => {
   const input = JSON.parse(event.body)
   console.log(`input is ${input}`)
 
-  const theId = input.id || context.awsRequestId
+  const theId = input.aoId || utils.slugify(input.aoName)
+  const regionId = event.pathParameters.regionId
 
   const ao = {
-    id: theId,
+    aoId: theId,
     aoName: input.aoName,
     regionId: input.regionId,
     gpsCoordinates: input.gpsCoordinates,
@@ -24,7 +25,8 @@ exports.handler = async (event, context) => {
   const params = {
     TableName: process.env.AOS_TABLE,
     Key: {
-      id: ao.id
+      aoId: ao.aoId,
+      regionId: ao.regionId
     },
     Item: ao
   }

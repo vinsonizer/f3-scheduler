@@ -10,10 +10,10 @@ exports.handler = async (event, context) => {
   const input = JSON.parse(event.body)
   console.log(`input is ${input}`)
 
-  const id = input.id || utils.slugify(input.regionName)
+  const regionId = input.regionId || utils.slugify(input.regionName)
 
   const region = {
-    id: id,
+    regionId: regionId,
     regionName: input.regionName,
     emailAddress: input.emailAddress,
     website: input.website,
@@ -24,7 +24,7 @@ exports.handler = async (event, context) => {
   const params = {
     TableName: process.env.REGIONS_TABLE,
     Key: {
-      id: region.id
+      regionId: region.regionId
     },
     Item: region
   }

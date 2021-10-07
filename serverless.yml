@@ -67,28 +67,28 @@ functions:
     handler: backend/get_assignment.getById
     events:
       - http:
-          path: assignments/{id}
+          path: assignments/{assignmentId}
           method: get
           cors: true
   updateAo:
     handler: backend/update_ao.handler
     events:
       - http:
-          path: aos
+          path: regions/{regionId}/aos
           method: post
           cors: true
   listAos:
     handler: backend/get_ao.getAll
     events:
       - http:
-          path: aos
+          path: regions/{regionId}/aos
           method: get
           cors: true
   getAoDetails:
     handler: backend/get_ao.getById
     events:
       - http:
-          path: aos/{id}
+          path: regions/{regionId}/aos/{aoId}
           method: get
           cors: true
   updatePax:
@@ -109,7 +109,7 @@ functions:
     handler: backend/get_pax.getById
     events:
       - http:
-          path: pax/{id}
+          path: pax/{paxId}
           method: get
           cors: true
   updateRegion:
@@ -130,7 +130,7 @@ functions:
     handler: backend/get_region.getById
     events:
       - http:
-          path: regions/{id}
+          path: regions/{regionId}
           method: get
           cors: true
 
@@ -141,11 +141,15 @@ resources:
       Properties:
         TableName: ${self:provider.environment.AOS_TABLE}
         AttributeDefinitions:
-          - AttributeName: id
+          - AttributeName: regionId
+            AttributeType: S
+          - AttributeName: aoId
             AttributeType: S
         KeySchema:
-          - AttributeName: id
+          - AttributeName: regionId
             KeyType: HASH
+          - AttributeName: aoId
+            KeyType: RANGE
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
@@ -154,10 +158,10 @@ resources:
       Properties:
         TableName: ${self:provider.environment.ASSIGNMENTS_TABLE}
         AttributeDefinitions:
-          - AttributeName: id
+          - AttributeName: assignmentId
             AttributeType: S
         KeySchema:
-          - AttributeName: id
+          - AttributeName: assignmentId
             KeyType: HASH
         ProvisionedThroughput:
           ReadCapacityUnits: 1
@@ -167,10 +171,10 @@ resources:
       Properties:
         TableName: ${self:provider.environment.PAX_TABLE}
         AttributeDefinitions:
-          - AttributeName: id
+          - AttributeName: paxId
             AttributeType: S
         KeySchema:
-          - AttributeName: id
+          - AttributeName: paxId
             KeyType: HASH
         ProvisionedThroughput:
           ReadCapacityUnits: 1
@@ -180,10 +184,10 @@ resources:
       Properties:
         TableName: ${self:provider.environment.REGIONS_TABLE}
         AttributeDefinitions:
-          - AttributeName: id
+          - AttributeName: regionId
             AttributeType: S
         KeySchema:
-          - AttributeName: id
+          - AttributeName: regionId
             KeyType: HASH
         ProvisionedThroughput:
           ReadCapacityUnits: 1

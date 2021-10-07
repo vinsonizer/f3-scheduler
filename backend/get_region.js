@@ -27,7 +27,7 @@ exports.getById = async (event, context) => {
   const params = {
     TableName: process.env.REGIONS_TABLE,
     Key: {
-      id: event.pathParameters.id
+      regionId: event.pathParameters.regionId
     }
   }
 
