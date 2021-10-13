@@ -4,13 +4,19 @@ const AWS = require('aws-sdk')
 const dynamodb = new AWS.DynamoDB.DocumentClient()
 
 exports.getAll = async (event, context) => {
-  const params = {
-    TableName: process.env.AOS_TABLE
-  }
-
   const regionId = event.pathParameters.regionId
 
-  const result = await dynamodb.scan(params).promise()
+  const params = {
+    TableName: process.env.AOS_TABLE,
+    KeyConditionExpression: "#regionId = :rId",
+    ExpressionAttributeNames: {
+      "#regionId": "regionId"
+    },
+    ExpressionAttributeValues: {
+      ":rId": regionId
+    }
+  }
+  const result = await dynamodb.query(params).promise()
 
   const response = {
     statusCode: 200,
@@ -27,10 +33,12 @@ exports.getAll = async (event, context) => {
 
 exports.getById = async (event, context) => {
   const regionId = event.pathParameters.regionId
+  const aoId = event.pathParameters.aoId
   const params = {
     TableName: process.env.AOS_TABLE,
     Key: {
-      regionId: regionId
+      regionId: regionId,
+      aoId: aoId
     }
   }
 

@@ -10,11 +10,12 @@ exports.handler = async (event, context) => {
   console.log(`input is ${input}`)
 
   const theId = input.id || context.awsRequestId
+  const regionId = event.pathParameters.regionId
 
   const pax = {
-    id: theId,
+    paxId: theId,
     paxName: input.paxName,
-    regionId: input.regionId,
+    regionId: regionId,
     firstName: input.firstName,
     lastName: input.lastName,
     phoneNumber: input.phoneNumber,
@@ -25,7 +26,8 @@ exports.handler = async (event, context) => {
   const params = {
     TableName: process.env.PAX_TABLE,
     Key: {
-      paxName: pax.paxName
+      regionId: pax.regionId,
+      paxId: pax.paxId
     },
     Item: pax
   }

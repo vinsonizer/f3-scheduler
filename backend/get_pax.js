@@ -27,7 +27,8 @@ exports.getById = async (event, context) => {
   const params = {
     TableName: process.env.PAX_TABLE,
     Key: {
-      id: event.pathParameters.id
+      regionId: event.pathParameters.regionId,
+      paxId: event.pathParameters.paxId
     }
   }
 

@@ -31,6 +31,7 @@ provider:
             - dynamodb:UpdateItem
             - dynamodb:PutItem
             - dynamodb:GetItem
+            - dynamodb:Query
           Resource: "arn:aws:dynamodb:*:*:table/${self:provider.environment.AOS_TABLE}"
         - Effect: "Allow"
           Action:
@@ -53,21 +54,21 @@ functions:
     handler: backend/update_assignment.handler
     events:
       - http:
-          path: assignments
+          path: regions/{regionId}/aos/{aoId}/assignments
           method: post
           cors: true
   listAssignments:
     handler: backend/get_assignment.getAll
     events:
       - http:
-          path: assignments
+          path: regions/{regionId}/aos/{aoId}/assignments
           method: get
           cors: true
   getAssignmentDetails:
     handler: backend/get_assignment.getById
     events:
       - http:
-          path: assignments/{assignmentId}
+          path: regions/{regionId}/aos/{aoId}/assignments/{timestamp}
           method: get
           cors: true
   updateAo:
@@ -95,21 +96,21 @@ functions:
     handler: backend/update_pax.handler
     events:
       - http:
-          path: pax
+          path: regions/{regionId}/pax
           method: post
           cors: true
   listPax:
     handler: backend/get_pax.getAll
     events:
       - http:
-          path: pax
+          path: regions/{regionId}/pax
           method: get
           cors: true
   getPaxDetails:
     handler: backend/get_pax.getById
     events:
       - http:
-          path: pax/{paxId}
+          path: regions/{regionId}/pax/{paxId}
           method: get
           cors: true
   updateRegion:
@@ -158,11 +159,15 @@ resources:
       Properties:
         TableName: ${self:provider.environment.ASSIGNMENTS_TABLE}
         AttributeDefinitions:
-          - AttributeName: assignmentId
+          - AttributeName: aoId
             AttributeType: S
+          - AttributeName: timestamp
+            AttributeType: N
         KeySchema:
-          - AttributeName: assignmentId
+          - AttributeName: aoId
             KeyType: HASH
+          - AttributeName: timestamp
+            KeyType: RANGE
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
@@ -171,11 +176,15 @@ resources:
       Properties:
         TableName: ${self:provider.environment.PAX_TABLE}
         AttributeDefinitions:
+          - AttributeName: regionId
+            AttributeType: S
           - AttributeName: paxId
             AttributeType: S
         KeySchema:
-          - AttributeName: paxId
+          - AttributeName: regionId
             KeyType: HASH
+          - AttributeName: paxId
+            KeyType: RANGE
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1

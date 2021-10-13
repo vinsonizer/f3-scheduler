@@ -1,5 +1,7 @@
 // Include the AWS SDK module
 const AWS = require('aws-sdk')
+const utils = require('backend/utils')
+
 // Instantiate a DynamoDB document client with the SDK
 const dynamodb = new AWS.DynamoDB.DocumentClient()
 
@@ -18,7 +20,9 @@ exports.handler = async (event, context) => {
     regionId: input.regionId,
     gpsCoordinates: input.gpsCoordinates,
     type: input.type,
-    schedule: input.schedule,
+    dayOfWeek: input.dayOfWeek,
+    startTime: input.startTime,
+    endTime: input.endTime,
     siteQId: input.siteQId
   }
 

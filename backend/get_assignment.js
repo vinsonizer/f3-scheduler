@@ -5,7 +5,7 @@ const dynamodb = new AWS.DynamoDB.DocumentClient()
 
 exports.getAll = async (event, context) => {
   const params = {
-    TableName: process.env.AOS_TABLE
+    TableName: process.env.ASSIGNMENTS_TABLE
   }
 
   const result = await dynamodb.scan(params).promise()
@@ -17,7 +17,7 @@ exports.getAll = async (event, context) => {
       'Access-Control-Allow-Credentials': true
     },
     body: JSON.stringify({
-      aos: result.Items
+      assignments: result.Items
     })
   }
   return response
@@ -25,7 +25,7 @@ exports.getAll = async (event, context) => {
 
 exports.getById = async (event, context) => {
   const params = {
-    TableName: process.env.AOS_TABLE,
+    TableName: process.env.ASSIGNMENTS_TABLE,
     Key: {
       id: event.pathParameters.id
     }
