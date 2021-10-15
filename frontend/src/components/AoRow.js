@@ -22,7 +22,7 @@ return (
     <td><a href={"/region/"+ props.ao.regionId + "/ao/" + props.ao.aoId}>{props.ao.aoName}</a></td>
     <td>{props.ao.type}</td>
     <td>{scheduleFormatter(props.ao)}</td>
-    <td>{paxFormatter(props.ao.siteQId)}</td>
+    <td>{props.siteQ ? props.siteQ.paxName : ""}</td>
   </tr>
   );
 }

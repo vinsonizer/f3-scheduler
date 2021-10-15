@@ -69,18 +69,17 @@ const AoDetails = (props) => {
   const submitHandler = (event) => {
     event.preventDefault()
     alert("submitting for " + JSON.stringify(ao, null, 2))
-    postApi('regions/' + ao.regionId + "/aos", ao, function(err, data) {
+    postApi('/regions/' + ao.regionId + "/aos", ao, function(err, data) {
       if(err) console.log(JSON.stringify(err, null, 2))
-      alert("got back: " + JSON.stringify(data, null, 2))
       setAo({...ao,
-        aoId: data.ao.aoId,
-        aoName: data.ao.aoName,
-        regionId: data.ao.regionId,
-        type: data.ao.type,
-        dayOfWeek: data.ao.dayOfWeek,
-        startTime: data.ao.startTime,
-        endTime: data.ao.endTime,
-        siteQId: data.ao.siteQId,
+        aoId: data.aoId,
+        aoName: data.aoName,
+        regionId: data.regionId,
+        type: data.type,
+        dayOfWeek: data.dayOfWeek,
+        startTime: data.startTime,
+        endTime: data.endTime,
+        siteQId: data.siteQId,
       });
       setShowAssignments(true)
     })
@@ -93,8 +92,17 @@ const AoDetails = (props) => {
 
     return (
       <Container>
-        <h1>{!ao.aoName ? "New AO" : ao.aoName }</h1>
         <Container className="p-3">
+          <Row>
+            <Col>
+              <h1>{!ao.aoName ? "New AO" : ao.aoName }</h1>
+            </Col>
+            <Col className="offset-mb-6">
+              <Button variant="primary" type="submit">
+                Submit
+              </Button>
+            </Col>
+          </Row>
           <Form onSubmit={submitHandler}>
             <Row className="mb-3">
               <Form.Group as={Col} controlId="gridAoName">
@@ -159,13 +167,6 @@ const AoDetails = (props) => {
               </Form.Group>
             </Row>
 
-            <Row>
-              <Col className="pt-3 pb-3">
-                <Button variant="primary" type="submit">
-                  Submit
-                </Button>
-              </Col>
-            </Row>
           </Form>
         </Container>
         {showAssignments ?

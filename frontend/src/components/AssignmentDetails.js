@@ -11,7 +11,7 @@ import {useParams} from "react-router-dom"
 const AssignmentDetails = (props) => {
 
   const {regionId, aoId, timestamp} = useParams()
-  const dateStr = ""
+  const [dateStr, setDateStr] = useState("")
   const [assignment, setAssignment] = useState({
     aoId: aoId,
     timestamp: 0,
@@ -73,6 +73,7 @@ const AssignmentDetails = (props) => {
       ...assignment,
       [target]: new Date(event.target.value).getTime(),
     })
+    setDateStr(event.target.value)
   }
 
   const assignmentHandler = (target, index) => (event) => {
@@ -94,10 +95,11 @@ const AssignmentDetails = (props) => {
       if(err) console.log(JSON.stringify(err, null, 2))
       alert("got back: " + JSON.stringify(data, null, 2))
       setAssignment({...assignment,
-        aoId: data.assignment.aoId,
-        timestamp: data.assignment.timestamp,
-        assignmentStatus: data.assignment.assignmentStatus
+        aoId: data.aoId,
+        timestamp: data.timestamp,
+        assignmentStatus: data.assignmentStatus
       });
+      setDateStr(new Date(data.timestamp).toLocaleDateString())
     })
   }
 

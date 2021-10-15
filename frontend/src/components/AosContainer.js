@@ -7,12 +7,20 @@ import {getApi} from "../Client"
 const AosContainer = (props) => {
 
   const [aos, setAos] = useState([])
+  const [pax, setPax] = useState({})
 
   useEffect(() => {
     if(props.regionId) {
       getApi('/regions/' + props.regionId + "/aos", (err, data) => {
         if(err) throw(err)
         setAos(data.aos);
+      })
+      getApi('/regions/' + props.regionId + "/pax", (err, data) => {
+        if(err) throw(err)
+        setPax(data.pax.reduce((map, obj) => {
+          map[obj.paxId] = obj
+          return map
+        }, {}));
       })
     }
   }, [props.regionId])
@@ -32,7 +40,7 @@ const AosContainer = (props) => {
           {!aos ?
             <tr><td colSpan="4">Loading</td></tr> : aos.map(ao => {
               //console.log(ao);
-              return(<AoRow ao={ao} key={ao.aoId} pax={props.pax}/>)
+              return(<AoRow ao={ao} key={ao.aoId} siteQ={ao.siteQId ? pax[ao.siteQId] : {}}/>)
             })}
         </tbody>
       </Table>

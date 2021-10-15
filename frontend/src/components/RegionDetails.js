@@ -18,8 +18,6 @@ const RegionDetails = (props) => {
     history.push(path);
   }
 
-  const [pax, setPax] = useState([])
-
   const [region, setRegion] = useState({
     regionId: "",
     regionName:"",
@@ -42,10 +40,6 @@ const RegionDetails = (props) => {
           website: data.website,
         });
         setShowAos(true)
-      })
-      getApi('regions/' + regionId + "/pax", (err, data) => {
-        if(err) throw(err)
-        setPax(data.pax)
       })
     }
   }, [regionId])
@@ -80,7 +74,17 @@ const RegionDetails = (props) => {
 
     return (
       <Container>
-        <Container>
+        <Container className="m-3">
+          <Row>
+            <Col>
+              <h1>{region.regionName}</h1>
+            </Col>
+            <Col>
+              <Button variant="primary" type="submit" className="offset-md-10">
+                Submit
+              </Button>
+            </Col>
+          </Row>
           <Form onSubmit={submitHandler}>
             <Row className="mb-3">
               <Form.Group as={Col} controlId="gridRegionName">
@@ -105,22 +109,15 @@ const RegionDetails = (props) => {
                 <Form.Control placeholder="Enter website" value={region.website} onChange={myChangeHandler("website")}/>
               </Form.Group>
             </Row>
-            <Row>
-              <Col>
-                <Button variant="primary" type="submit">
-                  Submit
-                </Button>
-              </Col>
-            </Row>
           </Form>
+        </Container>
+        <Container className="m-3">
           {showAos ?
-            <Container className="pt-3">
-              <Row>
-                <AosContainer regionId={region.regionId} pax={pax}/>
-              </Row>
-            </Container> : <></>}
+            <Row>
+              <AosContainer regionId={region.regionId}/>
+            </Row> : <></>}
           <Row>
-            <Col className="offset-md-10">
+            <Col className="offset-md-11">
               <Button variant="primary" type="button" onClick={newAo}>Add AO</Button>
             </Col>
           </Row>
