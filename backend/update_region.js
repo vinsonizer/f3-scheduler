@@ -38,9 +38,7 @@ exports.handler = async (event, context) => {
   try {
     await dynamodb.put(params).promise()
     response.statusCode = 200
-    response.body = JSON.stringify({
-      region: region
-    })
+    response.body = JSON.stringify(region)
   } catch (err) {
     response.statusCode = 500
     response.body = JSON.stringify(err)

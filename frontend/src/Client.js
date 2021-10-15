@@ -1,9 +1,13 @@
 const baseUrl = process.env.REACT_APP_ENDPOINT
+const inDev = process.env.NODE_ENV === 'development'
 
 export function getApi(path = '', callback) {
   fetch(baseUrl + path)
     .then(res => res.json())
-    .then(data => callback(null, data))
+    .then(data => {
+      if (inDev) console.log(`${path} returned ${JSON.stringify(data, null, 2)}`)
+      callback(null, data)
+    })
     .catch(err => callback(err))
 };
 
@@ -24,6 +28,9 @@ export async function postApi(path = '', data = {}, callback) {
   }
   fetch(baseUrl + path, options)
     .then(res => res.json())
-    .then(data => callback(null, data))
+    .then(data => {
+      if (inDev) console.log(`${path} returned ${JSON.stringify(data, null, 2)}`)
+      callback(null, data)
+    })
     .catch(err => callback(err));
 }
