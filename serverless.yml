@@ -208,5 +208,5 @@ plugins:
 custom:
   client:
     bucketName: ${env:FINCH_BUCKET_NAME}
-    distributionFolder: frontend
+    distributionFolder: frontend/build
     errorDocument: index.html

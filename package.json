@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "serverless-finch": "^2.6.0"
+  },
+  "scripts": {
+    "deploy-backend": "sls deploy && sls info -v | grep 'ServiceEndpoint' | sed 's,ServiceEndpoint: ,REACT_APP_ENDPOINT=,g' > frontend/.env",
+    "build-client": "cd frontend; npm run build; cd ../",
+    "deploy-client": "npm run build-client && sls client deploy --no-confirm",
+    "deploy-all": "npm run deploy-backend && npm run deploy-client"
+  }
+}
