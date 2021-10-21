@@ -1,53 +1,27 @@
-// Include the AWS SDK module
-const AWS = require('aws-sdk')
-const utils = require('backend/utils')
-
-// Instantiate a DynamoDB document client with the SDK
-const dynamodb = new AWS.DynamoDB.DocumentClient()
+const dynamo = require('./utils/dynamo')
+const lambda = require('./utils/lambda')
+const utils = require('./utils/string_utils')
 
 exports.handler = async (event, context) => {
-  console.log(`event is ${JSON.stringify(event)}`)
+  return await lambda.getResult(async () => {
+    const input = lambda.getInput(event)
 
-  const input = JSON.parse(event.body)
-  console.log(`input is ${input}`)
-
-  const theId = input.aoId || utils.slugify(input.aoName)
-  const regionId = event.pathParameters.regionId
-
-  const ao = {
-    aoId: theId,
-    aoName: input.aoName,
-    regionId: input.regionId,
-    gpsCoordinates: input.gpsCoordinates,
-    type: input.type,
-    dayOfWeek: input.dayOfWeek,
-    startTime: input.startTime,
-    endTime: input.endTime,
-    siteQId: input.siteQId
-  }
-
-  const params = {
-    TableName: process.env.AOS_TABLE,
-    Key: {
-      aoId: ao.aoId,
-      regionId: ao.regionId
-    },
-    Item: ao
-  }
-
-  const response = {
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Credentials': true
+    const ao = {
+      ...input,
+      aoId: input.aoId || utils.slugify(input.aoName),
+      regionId: lambda.param(event, 'regionId')
     }
-  }
-  try {
-    await dynamodb.put(params).promise()
-    response.statusCode = 200
-    response.body = JSON.stringify(ao)
-  } catch (err) {
-    response.statusCode = 500
-    response.body = JSON.stringify(err)
-  }
-  return response
+
+    const params = {
+      TableName: process.env.AOS_TABLE,
+      Key: {
+        aoId: ao.aoId,
+        regionId: ao.regionId
+      },
+      Item: ao
+    }
+
+    await dynamo.put(params)
+    return ao
+  })
 }

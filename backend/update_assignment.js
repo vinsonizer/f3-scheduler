@@ -1,45 +1,29 @@
-// Include the AWS SDK module
-const AWS = require('aws-sdk')
-
-// Instantiate a DynamoDB document client with the SDK
-const dynamodb = new AWS.DynamoDB.DocumentClient()
+const dynamo = require('./utils/dynamo')
+const lambda = require('./utils/lambda')
 
 exports.handler = async (event, context) => {
-  console.log(`event is ${JSON.stringify(event)}`)
+  return await lambda.getResult(async () => {
+    const input = lambda.getInput(event)
 
-  const input = JSON.parse(event.body)
-  console.log(`input is ${input}`)
-
-  const aoId = event.pathParameters.aoId
-
-  const assignment = {
-    aoId: aoId,
-    timestamp: input.timestamp,
-    assignmentStatus: input.assignmentStatus
-  }
-
-  const params = {
-    TableName: process.env.ASSIGNMENTS_TABLE,
-    Key: {
-      aoId: assignment.aoId,
-      timestamp: assignment.timestamp
-    },
-    Item: assignment
-  }
-
-  const response = {
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Credentials': true
+    console.log('1')
+    const assignment = {
+      ...input,
+      aoId: lambda.param(event, 'aoId')
     }
-  }
-  try {
-    await dynamodb.put(params).promise()
-    response.statusCode = 200
-    response.body = JSON.stringify(assignment)
-  } catch (err) {
-    response.statusCode = 500
-    response.body = JSON.stringify(err)
-  }
-  return response
+    console.log('2')
+
+    const params = {
+      TableName: process.env.ASSIGNMENTS_TABLE,
+      Key: {
+        aoId: assignment.aoId,
+        timestamp: assignment.timestamp
+      },
+      Item: assignment
+    }
+    console.log('3')
+
+    await dynamo.put(params)
+    console.log('4')
+    return assignment
+  })
 }

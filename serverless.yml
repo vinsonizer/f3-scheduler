@@ -2,6 +2,10 @@ service: f3-scheduler
 
 useDotenv: true
 
+package:
+  patterns:
+    - '!frontend/**'
+
 configValidationMode: error
 
 frameworkVersion: '2'
@@ -58,14 +62,14 @@ functions:
           method: post
           cors: true
   listAssignments:
-    handler: backend/get_assignment.getAll
+    handler: backend/get_all_assignments.handler
     events:
       - http:
           path: regions/{regionId}/aos/{aoId}/assignments
           method: get
           cors: true
   getAssignmentDetails:
-    handler: backend/get_assignment.getById
+    handler: backend/get_assignment_by_id.handler
     events:
       - http:
           path: regions/{regionId}/aos/{aoId}/assignments/{timestamp}
@@ -79,14 +83,14 @@ functions:
           method: post
           cors: true
   listAos:
-    handler: backend/get_ao.getAll
+    handler: backend/get_all_aos_by_region.handler
     events:
       - http:
           path: regions/{regionId}/aos
           method: get
           cors: true
   getAoDetails:
-    handler: backend/get_ao.getById
+    handler: backend/get_ao_by_id.handler
     events:
       - http:
           path: regions/{regionId}/aos/{aoId}
@@ -100,14 +104,14 @@ functions:
           method: post
           cors: true
   listPax:
-    handler: backend/get_pax.getAll
+    handler: backend/get_all_pax.handler
     events:
       - http:
           path: regions/{regionId}/pax
           method: get
           cors: true
   getPaxDetails:
-    handler: backend/get_pax.getById
+    handler: backend/get_pax_by_id.handler
     events:
       - http:
           path: regions/{regionId}/pax/{paxId}
@@ -121,14 +125,14 @@ functions:
           method: post
           cors: true
   listRegions:
-    handler: backend/get_region.getAll
+    handler: backend/get_all_regions.handler
     events:
       - http:
           path: regions
           method: get
           cors: true
   getRegionDetails:
-    handler: backend/get_region.getById
+    handler: backend/get_region_by_id.handler
     events:
       - http:
           path: regions/{regionId}
