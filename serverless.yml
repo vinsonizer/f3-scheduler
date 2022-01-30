@@ -2,10 +2,6 @@ service: f3-scheduler
 
 useDotenv: true
 
-package:
-  patterns:
-    - '!frontend/**'
-
 configValidationMode: error
 
 frameworkVersion: '2'
@@ -205,12 +201,3 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-
-plugins:
-  - serverless-finch
-
-custom:
-  client:
-    bucketName: ${env:FINCH_BUCKET_NAME}
-    distributionFolder: frontend/build
-    errorDocument: index.html
