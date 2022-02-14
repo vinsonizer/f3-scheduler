@@ -11,6 +11,8 @@ provider:
   runtime: nodejs12.x
   lambdaHashingVersion: '20201221'
   environment:
+    USER_POOL_ID: { Ref: UserPool }
+    CLIENT_ID: { Ref: UserClient }
     PAX_TABLE: f3-scheduler-pax
     REGIONS_TABLE: f3-scheduler-regions
     AOS_TABLE: f3-scheduler-aos
@@ -18,6 +20,12 @@ provider:
   iam:
     role:
       statements:
+        - Effect: "Allow"
+          Action:
+            - cognito-idp:AdminInitiateAuth
+            - cognito-idp:AdminCreateUser
+            - cognito-idp:AdminSetUserPassword
+          Resource: "*"
         - Effect: "Allow"
           Action:
             - dynamodb:Scan
@@ -50,6 +58,25 @@ provider:
 
 
 functions:
+
+  # User signup and login functions
+  loginUser:
+    handler: backend/users.login
+    events:
+      - http:
+          path: user/login
+          method: post
+          cors: true
+
+  signupUser:
+    handler: backend/users.signup
+    events:
+      - http:
+          path: user/signup
+          method: post
+          cors: true
+
+  # Assignment management
   updateAssignment:
     handler: backend/update_assignment.handler
     events:
@@ -57,6 +84,16 @@ functions:
           path: regions/{regionId}/aos/{aoId}/assignments
           method: post
           cors: true
+          authorizer:
+            name: PrivateAuthorizer
+            type: COGNITO_USER_POOLS
+            arn:
+              Fn::GetAtt:
+                - UserPool
+                - Arn
+            claims:
+              - email
+
   listAssignments:
     handler: backend/get_all_assignments.handler
     events:
@@ -64,6 +101,16 @@ functions:
           path: regions/{regionId}/aos/{aoId}/assignments
           method: get
           cors: true
+          authorizer:
+            name: PrivateAuthorizer
+            type: COGNITO_USER_POOLS
+            arn:
+              Fn::GetAtt:
+                - UserPool
+                - Arn
+            claims:
+              - email
+
   getAssignmentDetails:
     handler: backend/get_assignment_by_id.handler
     events:
@@ -71,6 +118,17 @@ functions:
           path: regions/{regionId}/aos/{aoId}/assignments/{timestamp}
           method: get
           cors: true
+          authorizer:
+            name: PrivateAuthorizer
+            type: COGNITO_USER_POOLS
+            arn:
+              Fn::GetAtt:
+                - UserPool
+                - Arn
+            claims:
+              - email
+
+  # AO Management
   updateAo:
     handler: backend/update_ao.handler
     events:
@@ -78,6 +136,16 @@ functions:
           path: regions/{regionId}/aos
           method: post
           cors: true
+          authorizer:
+            name: PrivateAuthorizer
+            type: COGNITO_USER_POOLS
+            arn:
+              Fn::GetAtt:
+                - UserPool
+                - Arn
+            claims:
+              - email
+
   listAos:
     handler: backend/get_all_aos_by_region.handler
     events:
@@ -85,6 +153,16 @@ functions:
           path: regions/{regionId}/aos
           method: get
           cors: true
+          authorizer:
+            name: PrivateAuthorizer
+            type: COGNITO_USER_POOLS
+            arn:
+              Fn::GetAtt:
+                - UserPool
+                - Arn
+            claims:
+              - email
+
   getAoDetails:
     handler: backend/get_ao_by_id.handler
     events:
@@ -92,6 +170,17 @@ functions:
           path: regions/{regionId}/aos/{aoId}
           method: get
           cors: true
+          authorizer:
+            name: PrivateAuthorizer
+            type: COGNITO_USER_POOLS
+            arn:
+              Fn::GetAtt:
+                - UserPool
+                - Arn
+            claims:
+              - email
+
+  # Pax Management
   updatePax:
     handler: backend/update_pax.handler
     events:
@@ -99,6 +188,16 @@ functions:
           path: regions/{regionId}/pax
           method: post
           cors: true
+          authorizer:
+            name: PrivateAuthorizer
+            type: COGNITO_USER_POOLS
+            arn:
+              Fn::GetAtt:
+                - UserPool
+                - Arn
+            claims:
+              - email
+
   listPax:
     handler: backend/get_all_pax.handler
     events:
@@ -106,6 +205,16 @@ functions:
           path: regions/{regionId}/pax
           method: get
           cors: true
+          authorizer:
+            name: PrivateAuthorizer
+            type: COGNITO_USER_POOLS
+            arn:
+              Fn::GetAtt:
+                - UserPool
+                - Arn
+            claims:
+              - email
+
   getPaxDetails:
     handler: backend/get_pax_by_id.handler
     events:
@@ -113,6 +222,17 @@ functions:
           path: regions/{regionId}/pax/{paxId}
           method: get
           cors: true
+          authorizer:
+            name: PrivateAuthorizer
+            type: COGNITO_USER_POOLS
+            arn:
+              Fn::GetAtt:
+                - UserPool
+                - Arn
+            claims:
+              - email
+
+  # Region Management
   updateRegion:
     handler: backend/update_region.handler
     events:
@@ -120,6 +240,16 @@ functions:
           path: regions
           method: post
           cors: true
+          authorizer:
+            name: PrivateAuthorizer
+            type: COGNITO_USER_POOLS
+            arn:
+              Fn::GetAtt:
+                - UserPool
+                - Arn
+            claims:
+              - email
+
   listRegions:
     handler: backend/get_all_regions.handler
     events:
@@ -127,6 +257,16 @@ functions:
           path: regions
           method: get
           cors: true
+          authorizer:
+            name: PrivateAuthorizer
+            type: COGNITO_USER_POOLS
+            arn:
+              Fn::GetAtt:
+                - UserPool
+                - Arn
+            claims:
+              - email
+
   getRegionDetails:
     handler: backend/get_region_by_id.handler
     events:
@@ -134,6 +274,15 @@ functions:
           path: regions/{regionId}
           method: get
           cors: true
+          authorizer:
+            name: PrivateAuthorizer
+            type: COGNITO_USER_POOLS
+            arn:
+              Fn::GetAtt:
+                - UserPool
+                - Arn
+            claims:
+              - email
 
 resources:
   Resources:
@@ -201,3 +350,36 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
+
+    UserPool:
+      Type: AWS::Cognito::UserPool
+      Properties:
+        UserPoolName: f3-scheduler-auth-pool
+        Schema:
+          - Name: name
+            AttributeDataType: String
+            Mutable: true
+            Required: true
+          - Name: email
+            AttributeDataType: String
+            Mutable: false
+            Required: true
+          - Name: phone_number
+            AttributeDataType: String
+            Mutable: false
+            Required: true
+        Policies:
+          PasswordPolicy:
+            MinimumLength: 6
+        AutoVerifiedAttributes: ["email"]
+
+    UserClient:
+      Type: AWS::Cognito::UserPoolClient
+      Properties:
+        ClientName: f3-scheduler-user-pool-ui
+        GenerateSecret: false
+        UserPoolId: { Ref: UserPool }
+        AccessTokenValidity: 5
+        IdTokenValidity: 5
+        ExplicitAuthFlows:
+          - "ADMIN_NO_SRP_AUTH"

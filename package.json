@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "deploy-backend": "sls deploy"
+    "deploy-backend": "sls deploy",
     "deploy": "npm run deploy-backend"
   }
 }
