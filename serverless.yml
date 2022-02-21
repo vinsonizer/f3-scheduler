@@ -4,12 +4,12 @@ useDotenv: true
 
 configValidationMode: error
 
-frameworkVersion: '2'
+frameworkVersion: "2"
 
 provider:
   name: aws
   runtime: nodejs12.x
-  lambdaHashingVersion: '20201221'
+  lambdaHashingVersion: "20201221"
   environment:
     USER_POOL_ID: { Ref: UserPool }
     CLIENT_ID: { Ref: UserClient }
@@ -25,6 +25,7 @@ provider:
             - cognito-idp:AdminInitiateAuth
             - cognito-idp:AdminCreateUser
             - cognito-idp:AdminSetUserPassword
+            - cognito-idp:ListUsers
           Resource: "*"
         - Effect: "Allow"
           Action:
@@ -56,9 +57,7 @@ provider:
             - dynamodb:GetItem
           Resource: "arn:aws:dynamodb:*:*:table/${self:provider.environment.REGIONS_TABLE}"
 
-
 functions:
-
   # User signup and login functions
   loginUser:
     handler: backend/users.login
@@ -75,6 +74,23 @@ functions:
           path: user/signup
           method: post
           cors: true
+
+  listUsers:
+    handler: backend/users.listUsers
+    events:
+      - http:
+          path: user
+          method: get
+          cors: true
+          authorizer:
+            name: PrivateAuthorizer
+            type: COGNITO_USER_POOLS
+            arn:
+              Fn::GetAtt:
+                - UserPool
+                - Arn
+            claims:
+              - email
 
   # Assignment management
   updateAssignment:
