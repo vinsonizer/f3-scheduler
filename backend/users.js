@@ -26,6 +26,7 @@ const validateInput = (data) => {
 
 exports.signup = async (event) => {
   try {
+    console.log(JSON.stringify(event, null, 2));
     const isValid = validateInput(event.body);
     if (!isValid) {
       return sendResponse(400, { message: "Invalid input" });

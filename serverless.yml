@@ -63,7 +63,7 @@ functions:
     handler: backend/users.login
     events:
       - http:
-          path: user/login
+          path: login
           method: post
           cors: true
 
@@ -71,7 +71,7 @@ functions:
     handler: backend/users.signup
     events:
       - http:
-          path: user/signup
+          path: signup
           method: post
           cors: true
 
