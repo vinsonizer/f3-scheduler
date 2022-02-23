@@ -25,6 +25,7 @@ provider:
             - cognito-idp:AdminInitiateAuth
             - cognito-idp:AdminCreateUser
             - cognito-idp:AdminSetUserPassword
+            - cognito-idp:AdminGetUser
             - cognito-idp:ListUsers
           Resource: "*"
         - Effect: "Allow"
@@ -74,6 +75,23 @@ functions:
           path: signup
           method: post
           cors: true
+
+  getUser:
+    handler: backend/users.getUser
+    events:
+      - http:
+          path: user/{username}
+          method: get
+          cors: true
+          authorizer:
+            name: PrivateAuthorizer
+            type: COGNITO_USER_POOLS
+            arn:
+              Fn::GetAtt:
+                - UserPool
+                - Arn
+            claims:
+              - email
 
   listUsers:
     handler: backend/users.listUsers

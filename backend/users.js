@@ -1,4 +1,5 @@
 const AWS = require("aws-sdk");
+const lambda = require("./utils/lambda");
 const cognito = new AWS.CognitoIdentityServiceProvider();
 
 const sendResponse = (statusCode, body) => {
@@ -112,10 +113,41 @@ exports.listUsers = async (event) => {
       UserPoolId: userPoolId,
     };
     const response = await cognito.listUsers(params).promise();
-    return sendResponse(200, {
-      message: "Success",
-      token: response,
+    const output = response.Users.map((x) => {
+      return x.Attributes.reduce(
+        (prev, curr) => {
+          prev[curr["Name"]] = curr["Value"];
+          return prev;
+        },
+        { username: x.Username }
+      );
     });
+
+    return sendResponse(200, output);
+  } catch (error) {
+    const message = error.message ? error.message : "Internal server error";
+    return sendResponse(500, { message });
+  }
+};
+
+exports.getUser = async (event) => {
+  try {
+    const username = lambda.param(event, "username");
+    const userPoolId = process.env.USER_POOL_ID;
+    const params = {
+      Username: username,
+      UserPoolId: userPoolId,
+    };
+
+    const response = await cognito.adminGetUser(params).promise();
+    const output = response.UserAttributes.reduce(
+      (prev, curr) => {
+        prev[curr["Name"]] = curr["Value"];
+        return prev;
+      },
+      { username: response.Username }
+    );
+    return sendResponse(200, output);
   } catch (error) {
     const message = error.message ? error.message : "Internal server error";
     return sendResponse(500, { message });
